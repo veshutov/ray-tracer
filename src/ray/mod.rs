@@ -22,9 +22,13 @@ impl Ray {
         }
     }
 
-    pub fn color(&self, world: &Hittables) -> Color {
-        if let Some(hit) = world.hit(self, 0.0, f64::INFINITY) {
-            return 0.5 * (hit.normal + Color::new(1.0, 1.0, 1.0));
+    pub fn color(&self, world: &Hittables, depth: i32) -> Color {
+        if depth <= 0 {
+            return Color::new(0.0, 0.0, 0.0);
+        }
+        if let Some(hit) = world.hit(self, 0.001, f64::INFINITY) {
+            let target = hit.p + Vec3::random_in_hemisphere(&hit.normal);
+            return 0.5 * Ray::new(hit.p, target - hit.p).color(world, depth - 1);
         }
         let unit_direction = self.direction.unit_vector();
         let t = 0.5 * (unit_direction.y + 1.0);

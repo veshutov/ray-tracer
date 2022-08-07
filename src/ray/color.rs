@@ -8,9 +8,10 @@ pub type Color = Vec3;
 impl Color {
     pub fn write_color(&self, image_file: &mut File, samples_per_pixel: f64) {
         let scale = 1.0 / samples_per_pixel;
-        let r = self.x * scale;
-        let g = self.y * scale;
-        let b = self.z * scale;
+        let r = (self.x * scale).sqrt();
+        let g = (self.y * scale).sqrt();
+        let b = (self.z * scale).sqrt();
+
         let line = format!(
             "{} {} {}\n",
             (255.999 * clamp(r, 0.0, 0.999)) as i32,

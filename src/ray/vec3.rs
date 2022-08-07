@@ -1,5 +1,7 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Index, Mul, MulAssign, Sub, SubAssign};
 
+use crate::utils::{rand, rand_ranged};
+
 #[derive(Default, Debug, Copy, Clone)]
 pub struct Vec3 {
     pub x: f64,
@@ -8,6 +10,53 @@ pub struct Vec3 {
 }
 
 impl Vec3 {
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
+        Self {
+            x,
+            y,
+            z,
+        }
+    }
+
+    pub fn random() -> Self {
+        Self {
+            x: rand(),
+            y: rand(),
+            z: rand(),
+        }
+    }
+
+    pub fn random_ranged(min: f64, max: f64) -> Self {
+        Self {
+            x: rand_ranged(min, max),
+            y: rand_ranged(min, max),
+            z: rand_ranged(min, max),
+        }
+    }
+
+    pub fn random_in_unit_sphere() -> Self {
+        loop {
+            let p = Self::random_ranged(-1.0, 1.0);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
+
+    pub fn random_in_hemisphere(normal: &Vec3) -> Self {
+        let in_unit_sphere = Self::random_in_unit_sphere();
+        return if Self::dot(&in_unit_sphere, &normal) > 0.0 { // In the same hemisphere as the normal
+            in_unit_sphere
+        } else {
+            in_unit_sphere * -1.0
+        }
+    }
+
+    pub fn random_unit_vector() -> Self {
+        Self::random_in_unit_sphere().unit_vector()
+    }
+
+
     pub fn dot(v1: &Self, v2: &Self) -> f64 {
         v1.x * v2.x + v1.y * v2.y + v1.z * v2.z
     }
@@ -30,14 +79,6 @@ impl Vec3 {
 
     pub fn unit_vector(&self) -> Self {
         *self / self.length()
-    }
-
-    pub fn new(x: f64, y: f64, z: f64) -> Self {
-        Self {
-            x,
-            y,
-            z,
-        }
     }
 }
 
