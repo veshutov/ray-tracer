@@ -15,6 +15,13 @@ pub struct Ray {
 }
 
 impl Ray {
+    pub fn new(origin: Point3, direction: Vec3) -> Ray {
+        Ray {
+            origin,
+            direction,
+        }
+    }
+
     pub fn color(&self, world: &Hittables) -> Color {
         if let Some(hit) = world.hit(self, 0.0, f64::INFINITY) {
             return 0.5 * (hit.normal + Color::new(1.0, 1.0, 1.0));
