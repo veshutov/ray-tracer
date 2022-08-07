@@ -27,8 +27,10 @@ impl Ray {
             return Color::new(0.0, 0.0, 0.0);
         }
         if let Some(hit) = world.hit(self, 0.001, f64::INFINITY) {
-            let target = hit.p + Vec3::random_in_hemisphere(&hit.normal);
-            return 0.5 * Ray::new(hit.p, target - hit.p).color(world, depth - 1);
+            if let Some((scattered, attenuation)) = hit.material.scatter(self, &hit) {
+                return attenuation * scattered.color(world, depth - 1);
+            }
+            return Color::default();
         }
         let unit_direction = self.direction.unit_vector();
         let t = 0.5 * (unit_direction.y + 1.0);

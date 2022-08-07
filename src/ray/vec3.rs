@@ -49,13 +49,12 @@ impl Vec3 {
             in_unit_sphere
         } else {
             in_unit_sphere * -1.0
-        }
+        };
     }
 
     pub fn random_unit_vector() -> Self {
         Self::random_in_unit_sphere().unit_vector()
     }
-
 
     pub fn dot(v1: &Self, v2: &Self) -> f64 {
         v1.x * v2.x + v1.y * v2.y + v1.z * v2.z
@@ -67,6 +66,16 @@ impl Vec3 {
             y: v1.z * v2.x - v1.x * v2.z,
             z: v1.x * v2.y - v1.y * v2.x,
         }
+    }
+
+    pub fn reflect(&self, vec: &Self) -> Self {
+        *self - 2.0 * Vec3::dot(self, vec) * *vec
+    }
+
+    pub fn near_zero(&self) -> bool {
+        // Return true if the vector is close to zero in all dimensions.
+        let s = 1e-8;
+        return (self.x.abs() < s) && (self.y.abs() < s) && (self.z.abs() < s);
     }
 
     pub fn length(&self) -> f64 {
